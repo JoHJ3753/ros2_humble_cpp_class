@@ -1,0 +1,30 @@
+services:
+  ros2_humble_cpp:
+    build:
+      context: .
+      dockerfile: Dockerfile
+
+    container_name: ros2_humble_cpp
+
+    # 컨테이너를 종료하지 않고 계속 실행하기 위한 설정
+    stdin_open: true
+    tty: true
+
+    # ROS2 DDS 통신 테스트를 쉽게 하기 위해 host 네트워크 사용
+    # Windows Docker Desktop에서는 Linux와 동작 방식이 다를 수 있지만,
+    # 단일 컨테이너 학습 환경에서는 큰 문제가 없습니다.
+    network_mode: host
+
+    environment:
+      - ROS_DOMAIN_ID=10
+      - RMW_IMPLEMENTATION=rmw_fastrtps_cpp
+      - DISPLAY=host.docker.internal:0.0
+      - QT_X11_NO_MITSHM=1
+
+    volumes:
+      # Windows 작업 폴더의 ros2_ws를 컨테이너 /root/ros2_ws에 연결
+      - ./ros2_ws:/root/ros2_ws
+
+    working_dir: /root/ros2_ws
+
+    command: /bin/bash
